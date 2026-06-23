@@ -13,7 +13,7 @@
 2교시: if 조건문, bool 자료형  
 3교시: github io 페이지 만들기  
 4교시: if 조건문, 삼항 연산자, False로 변환되는 예  
-5교시:    
-6교시:   
-7교시:    
-8교시:  
+5교시: list, list 메소드, 바인딩, pyi  
+6교시: list method(pop, del, remove)  
+7교시: for, range, enumerate, zip  
+8교시:   
