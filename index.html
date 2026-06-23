@@ -1,1 +1,435 @@
-<h1> 이동헌</h1>
+```html
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gong_rc_2026 | 공주대 Autocar 프로젝트 수업</title>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: rgba(255, 255, 255, 0.92);
+            --text: #1e293b;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #38bdf8;
+            --line: #e2e8f0;
+            --chip: #eff6ff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.35), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.35), transparent 32%),
+                linear-gradient(135deg, #020617 0%, #0f172a 45%, #1e293b 100%);
+            padding: 40px 20px;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .top-right-photo {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: clamp(96px, 18vw, 180px);
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 28px rgba(2, 6, 23, 0.35);
+            z-index: 20;
+        }
+
+        .hero {
+            padding: 56px 36px;
+            border-radius: 32px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(14, 165, 233, 0.88));
+            color: white;
+            box-shadow: 0 28px 80px rgba(15, 23, 42, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -80px;
+            top: -80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        h1 {
+            margin: 24px 0 12px;
+            font-size: clamp(38px, 6vw, 68px);
+            line-height: 1;
+            letter-spacing: -0.06em;
+        }
+
+        .subtitle {
+            max-width: 680px;
+            margin: 0;
+            font-size: 19px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 18px;
+            border-radius: 14px;
+            background: white;
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 800;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
+        }
+
+        .button.secondary {
+            background: rgba(255, 255, 255, 0.16);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: none;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+            backdrop-filter: blur(16px);
+        }
+
+        .section-title {
+            margin: 0 0 18px;
+            font-size: 22px;
+            letter-spacing: -0.03em;
+        }
+
+        .info-list {
+            display: grid;
+            gap: 14px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .info-item {
+            padding: 16px;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .timeline {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 18px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(var(--primary), var(--accent));
+        }
+
+        .timeline li {
+            position: relative;
+            display: grid;
+            grid-template-columns: 46px 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .timeline li:last-child {
+            margin-bottom: 0;
+        }
+
+        .period {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+            z-index: 1;
+        }
+
+        .lesson {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: white;
+            border: 1px solid var(--line);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .lesson:hover {
+            transform: translateX(4px);
+            border-color: #93c5fd;
+        }
+
+        .lesson strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .lesson span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding: 22px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 14px;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 24px 14px;
+            }
+
+            .top-right-photo {
+                top: 10px;
+                right: 10px;
+                width: 92px;
+                border-radius: 12px;
+            }
+
+            .hero {
+                padding: 40px 24px;
+                border-radius: 26px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 22px;
+                border-radius: 24px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <img class="top-right-photo" src="img/20231111_124825.jpg" alt="Autocar class photo" />
+
+    <main class="page">
+        <section class="hero">
+            <div class="badge">🚗 Autocar Project Class</div>
+
+            <h1>gong_rc_2026</h1>
+
+            <p class="subtitle">
+                공주대에서 Autocar를 활용해 진행하는 프로젝트 수업입니다.
+                개발 환경 구성부터 GitHub, Python 기초까지 실습 중심으로 학습합니다.
+            </p>
+
+            <div class="actions">
+                <a class="button"
+                    href="https://docs.google.com/presentation/d/1NwCyi3hQ3WKvkgapCUH2Z7pcHDgDb3h2Jr1VzPnHE7E/edit?usp=sharing"
+                    target="_blank" rel="noopener noreferrer">
+                    📊 구글 슬라이드 보기
+                </a>
+
+                <a class="button secondary" href="https://github.com/ACUBCU/RCcar_2026" target="_blank"
+                    rel="noopener noreferrer">
+                    GitHub Repository
+                </a>
+            </div>
+        </section>
+
+        <section class="grid">
+            <aside class="card">
+                <h2 class="section-title">수업 정보</h2>
+
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="label">프로젝트명</span>
+                        <span class="value">gong_rc_2026</span>
+                    </li>
+
+                    <li class="info-item">
+                        <span class="label">주제</span>
+                        <span class="value">Autocar 프로젝트 수업</span>
+                    </li>
+
+                    <li class="info-item">
+                        <span class="label">학교</span>
+                        <span class="value">공주대학교</span>
+                    </li>
+
+                    <li class="info-item">
+                        <span class="label">수업 날짜</span>
+                        <span class="value">2026.06.23~07.17</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <section class="card">
+                <h2 class="section-title">2026년 6월 23일 수업 일정</h2>
+
+                <ol class="timeline">
+                    <li>
+                        <div class="period">1</div>
+                        <div class="lesson">
+                            <strong>수업 오리엔테이션</strong>
+                            <span>프로젝트 소개와 수업 진행 방식 안내</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">2</div>
+                        <div class="lesson">
+                            <strong>WSL2 설치, VS Code 설치</strong>
+                            <span>개발 환경 구성을 위한 기본 도구 설치</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">3</div>
+                        <div class="lesson">
+                            <strong>Git 설치, GitHub 계정 및 Repository 만들기</strong>
+                            <span>소스 코드 관리와 온라인 저장소 생성</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">4</div>
+                        <div class="lesson">
+                            <strong>Python 기초</strong>
+                            <span>Python 문법과 실행 구조 이해</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">5</div>
+                        <div class="lesson">
+                            <strong>print 함수 해석</strong>
+                            <span>출력 함수의 역할과 사용 방법 실습</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">6</div>
+                        <div class="lesson">
+                            <strong>변수와 자료형</strong>
+                            <span>데이터 저장 방식과 기본 자료형 학습</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">7</div>
+                        <div class="lesson">
+                            <strong>연산자와 표현식, input 함수 해석</strong>
+                            <span>계산, 입력, 표현식 처리 방법 실습</span>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="period">8</div>
+                        <div class="lesson">
+                            <strong>문자열 f-string, format</strong>
+                            <span>문자열 포매팅과 출력 형식 다루기</span>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+        </section>
+
+        <footer class="footer">
+            © 2026 gong_rc_2026 · Autocar Project Class
+        </footer>
+    </main>
+</body>
+
+</html>
+```
