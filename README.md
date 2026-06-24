@@ -3,8 +3,9 @@
 6.22~7.17<br>
 autocar 과정
 
-일자별 진도
-1주차(#https://github.com/ACUBCU/RCcar_2026/blob/main/python/code/week1/schedule.md)
+일자별 진도  
+[1주차](#./python/code/week1/schedule.md)  
+
 **양식**  
 1교시:   
 2교시:   
