@@ -5,6 +5,7 @@ autocar 과정
 
 일자별 진도  
 [1주차](./python/code/week1/schedule.md)  
+[2주차](./python/code/week2/schedule.md) 
 
 **양식**  
 1교시:   
