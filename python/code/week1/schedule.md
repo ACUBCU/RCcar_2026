@@ -16,4 +16,34 @@
 5교시: list, list 메소드, 바인딩, pyi  
 6교시: list method(pop, del, remove)  
 7교시: for, range, enumerate, zip  
+8교시: webview  
+
+**0624**  
+1교시: while loop  
+2교시: 사전 평가 시험  
+3교시: 함수 작성, type hint, doc string, return  
+4교시:   
+5교시:   
+6교시:   
+7교시:   
+8교시:   
+
+**0625**  
+1교시:   
+2교시:   
+3교시:   
+4교시:   
+5교시:   
+6교시:   
+7교시:   
+8교시:   
+
+**0626**  
+1교시:   
+2교시:   
+3교시:   
+4교시:   
+5교시:   
+6교시:   
+7교시:   
 8교시:   
