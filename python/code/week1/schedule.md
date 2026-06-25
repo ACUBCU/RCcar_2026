@@ -26,7 +26,7 @@
 5교시: 회귀함수, 람다 함수, map, filter  
 6교시: file 읽기 쓰기, open, with open  
 7교시: generator, decorator, closure  
-8교시:   
+8교시: time_decorator  
 
 **0625**  
 1교시:   

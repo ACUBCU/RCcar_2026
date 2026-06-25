@@ -1,12 +1,3 @@
-# 반복문
-# 재귀
-# 캐시
-# 함수
-# lambda
-# 파일 입출력
-# 제네레이터 / 이터레이터
-
-
 import time
 from functools import wraps
 
