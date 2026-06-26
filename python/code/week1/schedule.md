@@ -40,9 +40,9 @@
 
 **0626**  
 1교시: os, sys, urllib, time  
-2교시:   
-3교시: frame, package  
-4교시:   
+2교시: package 실습  
+3교시: 외부 모듈  
+4교시: 파이썬 frame  
 5교시:   
 6교시:   
 7교시:   
