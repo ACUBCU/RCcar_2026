@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCar PrimeX Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <div class="logo">AutoCar PrimeX <span class="sub">Telemetry</span></div>
+            <div class="status-indicator">
+                <span class="dot connected"></span> 시스템 연결됨
+            </div>
+        </header>
+
+        <main class="grid-container">
+            <div class="card device-card">
+                <h3>장치 정보 (Device)</h3>
+                <p>제조사: <strong id="info-manufacturer">-</strong></p>
+                <p>모델명: <strong id="info-model">-</strong></p>
+                <p>통신 상태: <span id="info-status" class="status-text">-</span></p>
+            </div>
+
+            <div class="card drive-card">
+                <h3>주행 제어 상태</h3>
+                <div class="metric-container">
+                    <div class="metric">
+                        <span class="label">현재 속도</span>
+                        <span class="value" id="drive-speed">0</span> <span class="unit">cm/s</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">조향 각도</span>
+                        <span class="value" id="drive-steering">0</span> <span class="unit">°</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">현재 기어</span>
+                        <span class="valueHighlight" id="drive-gear">P</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card sensor-card">
+                <h3>센서 관측 값 (Sensors)</h3>
+                <table class="sensor-table">
+                    <tr>
+                        <td>라이다(LiDAR) 정면 장애물 거리</td>
+                        <td><span id="sensor-lidar">0.0</span> m</td>
+                    </tr>
+                    <tr>
+                        <td>전방 초음파 센서</td>
+                        <td><span id="sensor-ultra-front">0</span> cm</td>
+                    </tr>
+                    <tr>
+                        <td>후방 초음파 센서</td>
+                        <td><span id="sensor-ultra-rear">0</span> cm</td>
+                    </tr>
+                    <tr>
+                        <td>IMU 센서 (Yaw 방향 각도)</td>
+                        <td><span id="sensor-imu">0.0</span> °</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card battery-card">
+                <h3>배터리 잔량</h3>
+                <div class="battery-gauge">
+                    <div class="battery-level" id="battery-level-bar" style="width: 0%;"></div>
+                    <span class="battery-text" id="battery-text">0%</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

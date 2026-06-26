@@ -1,0 +1,179 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #121824;
+    color: #e2e8f0;
+    padding: 20px;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1e293b;
+    margin-bottom: 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.logo .sub {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: normal;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    background: #1e293b;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.dot {
+    width: 100%;
+    max-width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.dot.connected {
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+/* Grid Layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #334155;
+}
+
+.card h3 {
+    font-size: 16px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+    border-left: 4px solid #38bdf8;
+    padding-left: 8px;
+}
+
+.card p {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.status-text {
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* 주행 데이터 스타일 */
+.metric-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.metric {
+    text-align: center;
+    flex: 1;
+}
+
+.metric .label {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.metric .value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #f8fafc;
+}
+
+.metric .valueHighlight {
+    font-size: 32px;
+    font-weight: bold;
+    color: #f59e0b;
+}
+
+.metric .unit {
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* 센서 테이블 스타일 */
+.sensor-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sensor-table td {
+    padding: 10px 0;
+    border-bottom: 1px solid #334155;
+    font-size: 14px;
+}
+
+.sensor-table tr:last-child td {
+    border-bottom: none;
+}
+
+.sensor-table td:last-child {
+    text-align: right;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+/* 배터리 게이지 */
+.battery-gauge {
+    position: relative;
+    width: 100%;
+    height: 35px;
+    background: #0f172a;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #475569;
+}
+
+.battery-level {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.5s ease;
+}
+
+.battery-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
