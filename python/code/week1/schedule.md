@@ -43,7 +43,7 @@
 2교시: package 실습  
 3교시: 외부 모듈  
 4교시: 파이썬 frame  
-5교시:   
-6교시:   
-7교시:   
-8교시:   
+5교시: webview 제작  
+6교시: webview 제작  
+7교시: webview 제작  
+8교시: webview 제작  
