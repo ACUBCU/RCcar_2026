@@ -43,7 +43,7 @@
 2교시: package 실습  
 3교시: 외부 모듈  
 4교시: 파이썬 frame  
-5교시: webview 제작  
-6교시: webview 제작  
+5교시: threading, asyncio 설명  
+6교시: flask server 구현 - click SSE 예제  
 7교시: webview 제작  
 8교시: webview 제작  
