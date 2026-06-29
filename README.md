@@ -4,8 +4,8 @@
 autocar 과정
 
 일자별 진도  
-[1주차](./python/code/week1/schedule.md) 06.22~06.26  
-[2주차](./python/code/week2/schedule.md) 06.29~07.03  
+[1주차](./python/code/week1/schedule.md) 06.22\~06.26  
+[2주차](./python/code/week2/schedule.md) 06.29\~07.03  
 
 **양식**  
 1교시:   
