@@ -39,10 +39,10 @@
 8교시: 모듈 및 배포, random 표준 모듈  
 
 **0626**  
-1교시: os, sys, urllib, time  
-2교시: package 실습  
-3교시: 외부 모듈  
-4교시: 파이썬 frame  
+1교시: sys, urllib, time  
+2교시: os, argv  
+3교시: 파이썬 frame, package 실습  
+4교시: 가상환경 uv 설명 탁상시계 webview 구현  
 5교시: threading, asyncio 설명  
 6교시: flask server 구현 - click SSE 예제  
 7교시: webview 제작  
