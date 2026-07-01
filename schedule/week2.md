@@ -1,25 +1,25 @@
 **0629**  
-1교시: RC카 모터 센서 제어기 구조 파악  
-2교시: RC카 구성 요소 이해  
-3교시: RC카 설정 및 기본 제어 방법  
-4교시: 센서 연결 및 데이터 수집 실습  
-5교시: 센서값 확인 및 오류 점검  
-6교시: 거리, 방향 데이터 전처리  
-7교시: 센서기반 조건 제어 구현  
-8교시: 센서기반 조건 제어 구현  
+1교시: autocar 프로젝트 설명  
+2교시: autocar 의 기본 구조 서보 led, motor, sensor, camera, lidar, imu  
+3교시: RDIS ip 설정, wifi 네트워크  
+4교시: 차량 제어 - 모터, 서보  
+5교시: 채널 나누어서 출력하기  
+6교시: imshow 함수  
+7교시: 사진 저장  
+8교시: 카메라 설명, gstreamer  
 
 **0630**  
-1교시:   
-2교시:   
-3교시:   
-4교시:   
-5교시:   
-6교시:   
-7교시:   
-8교시:  
+1교시: OpenCV canny edge  
+2교시: haar cascade  
+3교시: alsa mixer 디바이스  
+4교시: 스피커 다루기 alsa mixer, speaker test  
+5교시: 블럭 코드, 논블럭 코드  
+6교시: Tone class 설계  
+7교시: 실습 - 멜로디 연주  
+8교시: Record 설명  
 
 **0701**  
-1교시:   
+1교시: AudioPlay class, AudioRecord class  
 2교시:   
 3교시:   
 4교시:   
