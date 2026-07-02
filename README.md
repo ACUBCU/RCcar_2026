@@ -6,8 +6,8 @@ autocar 과정
 일자별 진도  
 [1주차](./schedule/week1.md) 06.22\~06.26  
 [2주차](./schedule/week2.md) 06.29\~07.03  
-[3주차](./schedule/week3.md) 07.6\~07.10  
-[4주차](./schedule/week4.md) 06.13\~07.17  
+[3주차](./schedule/week3.md) 07.06\~07.10  
+[4주차](./schedule/week4.md) 07.13\~07.17  
 
 **양식**  
 1교시:   
