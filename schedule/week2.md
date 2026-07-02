@@ -29,10 +29,10 @@
 8교시: 미니 프로젝트 - Autocar제어 api / webview 대시 보드 구현  
 
 **0702**  
-1교시:   
-2교시:   
-3교시:   
-4교시:   
+1교시: 복습, numpy 기초, bool indexing, fancy indexing  
+2교시: numpy 통계 함수, save, load  
+3교시: Pandas 기초, Series 생성 및 인덱싱  
+4교시: DataFrame 생성  
 5교시:   
 6교시:   
 7교시:   
