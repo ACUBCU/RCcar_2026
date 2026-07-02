@@ -23,10 +23,10 @@
 2교시: TTS 설명, gTTS 설치 및 실습  
 3교시: espeak 설치 및 실습, piper 설치 및 실습  
 4교시: stt 설명, whisper 설치 및 실습  
-5교시:   
-6교시:   
-7교시:   
-8교시:   
+5교시: numpy 기초, 초기화 함수(zeros, ones, full, eye, arange, linspace)  
+6교시: broadcast, 연산자, reshape, transpose, flatten  
+7교시: 미니 프로젝트 - Autocar제어 api / webview 대시 보드 구현  
+8교시: 미니 프로젝트 - Autocar제어 api / webview 대시 보드 구현  
 
 **0702**  
 1교시:   
