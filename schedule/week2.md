@@ -33,10 +33,10 @@
 2교시: numpy 통계 함수, save, load  
 3교시: Pandas 기초, Series 생성 및 인덱싱  
 4교시: DataFrame 생성  
-5교시:   
-6교시:   
-7교시:   
-8교시:   
+5교시: DataFrame 인덱싱, loc, iloc, drop, sort  
+6교시: DataFrame save, load, csv, excel  
+7교시: LiDAR 설명, LiDAR 센서 데이터 수집 및 시각화  
+8교시: [미니 과제] 일정 거리 유지 하기  
 
 **0703**  
 1교시:   
