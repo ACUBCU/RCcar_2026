@@ -26,5 +26,5 @@ save_csv.py<br>
 이전 기능에 오토카의 상대적인 좌표(x,y)와 그떄 cds값을 csv로 저장한다.  
 저장되는 파일명 : autocar_log_{코드 실행시간}.csv  
 <hr></hr>
-코드 실행시 화면 예<br></br>
+코드 실행시 화면 예  
 ![이미지 설명](example.png)
