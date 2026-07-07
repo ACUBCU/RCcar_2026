@@ -27,4 +27,4 @@ save_csv.py<br>
 저장되는 파일명 : autocar_log_{코드 실행시간}.csv  
 <hr></hr>
 코드 실행시 화면 예<br>
-![이미지 설명](example.png)
+![이미지 설명](./example.png)
