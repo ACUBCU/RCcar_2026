@@ -39,11 +39,11 @@
 8교시: [미니 과제] 일정 거리 유지 하기  
 
 **0703**  
-1교시:   
-2교시:   
-3교시:   
-4교시:   
-5교시:   
-6교시:   
-7교시:   
-8교시:   
+1교시: pandas 사칙연산  
+2교시: plt, seaborn, plotly 설명  
+3교시: figure, axes, subplots 개념 이해  
+4교시: bar 그래프, line 그래프, scatter 그래프, histogram 그래프, boxplot 그래프, heatmap 그래프  
+5교시: legend, title, xlabel, ylabel, grid, xlim, ylim, xticks, yticks  
+6교시: led 제어 코드, cds 제어 코드, 스위치 제어 코드  
+7교시: [필드 테스트] 운동장 트랙을 한바퀴 돌면서 CDS 센서 데이터 수집 및 시각화  
+8교시: [필드 테스트] 운동장 트랙을 한바퀴 돌면서 CDS 센서 데이터 수집 및 시각화  

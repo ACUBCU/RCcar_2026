@@ -5,12 +5,12 @@ import numpy as np
 import time
 
 Car = Pilot.AutoCar()
-
-forward_dataset = {'gyro' : [], 'steer' : []}
-backward_dataset = {'gyro' : [], 'steer' : []}
+Car.setSpeed(50)
 
 # 데이터 수집
-for i in range(-1, 1.1, 0.1):
+forward_dataset = {'gyro' : [], 'steer' : []}
+backward_dataset = {'gyro' : [], 'steer' : []}
+for i in range(-1, 1.1, 0.1): # steering 값을 -1부터 1까지 0.1씩 증가시키며 그때 자이로 값을 수집
     Car.steering = i
     Car.forward()
     time.sleep(0.5)
@@ -43,5 +43,6 @@ backward_LR.X_data = backward_dataset['gyro']
 backward_LR.Y_data = backward_dataset['steer']
 backward_LR.train(times = 5000, print_every = 100)
 
+# 결과
 print(f'전진 조향 제어 값 : {forward_LR.run([0])}')
 print(f'후진 조향 제어 값 : {backward_LR.run([0])}')
