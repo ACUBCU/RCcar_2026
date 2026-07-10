@@ -26,8 +26,11 @@ def car_backward(car_obj, speed):
 
 # --- 캘리브레이션 상수 ---
 CMD_TO_METERS_PER_SEC = 0.015
-STEERING_TO_RADS_PER_SEC = 0.02
 STEERING_TRIM = 0.0 
+
+# 자이로 센서 변환 상수
+GYRO_SCALE = (1.0 / 131.0) * (math.pi / 180.0) 
+GYRO_Z_OFFSET = 0.0 # 정지 상태 노이즈 평균값 (측정 후 수정 필요)
 
 # 데이터 저장소
 robot_pose = {'x': 0.0, 'y': 0.0, 'theta': math.pi / 2}
@@ -80,18 +83,31 @@ def hardware_loop():
             time.sleep(0.05)
             continue
 
+        # 1. 모터 명령값
         final_steering = current_steering + STEERING_TRIM
         final_steering = max(min(final_steering, 1.0), -1.0)
         applied_speed = current_speed
         
+        # 2. 오도메트리 업데이트 (IMU 자이로 연동)
         linear_velocity = applied_speed * CMD_TO_METERS_PER_SEC
-        angular_velocity = applied_speed * final_steering * STEERING_TO_RADS_PER_SEC
         
+        try:
+            # I2C 통신으로 Z축 회전 각속도 원시 데이터를 읽어와 rad/s로 변환
+            raw_gz = car.getGyro('z')
+            angular_velocity = (raw_gz - GYRO_Z_OFFSET) * GYRO_SCALE
+        except Exception as e:
+            # I2C 통신 에러 발생 시 회전하지 않은 것으로 간주
+            angular_velocity = 0.0
+
         with map_lock:
+            # 자이로 센서의 물리적 회전량으로 방향(Theta) 업데이트
             robot_pose['theta'] += angular_velocity * dt
+            
+            # 모터 명령 기반 직진 이동량으로 X, Y 좌표 업데이트
             robot_pose['x'] += linear_velocity * math.cos(robot_pose['theta']) * dt
             robot_pose['y'] += linear_velocity * math.sin(robot_pose['theta']) * dt
 
+        # 3. 실제 하드웨어 제어
         if applied_speed != last_speed or final_steering != last_steering:
             try:
                 car.steering = float(final_steering)
@@ -148,7 +164,7 @@ def index():
         <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
     </head>
     <body style="background:#222; color:white; font-family:sans-serif; text-align:center; margin: 0; padding: 20px;">
-        <h2>Interactive LiDAR Mapping (1st Person Top-View)</h2>
+        <h2>Interactive LiDAR Mapping (IMU Odometry & 1st Person Top-View)</h2>
         
         <div style="display:flex; justify-content:center; margin-bottom: 20px;">
             <canvas id="mainMap" width="800" height="600" style="background:black; border:2px solid #555;"></canvas>
@@ -172,7 +188,7 @@ def index():
             let isStopped = false;
             const stopBtn = document.getElementById('stopBtn');
 
-            // 음수 좌표까지 기록하기 위해 매우 큰 가상 도화지 생성
+            // 음수 좌표 기록용 확장 도화지
             const MAP_CENTER = 4000; 
             const mapCanvas = document.createElement('canvas');
             mapCanvas.width = 8000; 
@@ -246,7 +262,7 @@ def index():
             }
             
             function draw() {
-                // 1. 누적 맵 데이터 기록 (글로벌 좌표 기준)
+                // 1. 누적 맵 데이터 기록
                 mapCtx.fillStyle = 'rgba(76, 175, 80, 0.5)';
                 mapCtx.beginPath();
                 globalPoints.forEach(p => {
@@ -260,15 +276,13 @@ def index():
                 mainMap.clearRect(0,0,800,600);
                 mainMap.save();
 
-                // 카메라를 화면 정중앙으로 이동
                 const centerX = 400;
                 const centerY = 300;
                 mainMap.translate(centerX, centerY);
 
-                // 화면 회전: 로봇이 항상 위쪽(12시 방향)을 향하도록 캔버스를 반대 방향으로 회전
+                // 화면 회전
                 mainMap.rotate(-(robot.theta + Math.PI / 2));
-
-                // 맵 역이동: 로봇의 위치가 화면 중앙에 오도록 글로벌 좌표를 반대로 이동
+                // 글로벌 좌표 이동
                 mainMap.translate(-(robot.x * scale), -(robot.y * scale));
 
                 // 배경 그리드 렌더링
@@ -276,7 +290,6 @@ def index():
                 mainMap.lineWidth = 1;
                 mainMap.beginPath();
                 
-                // 최적화를 위해 로봇 주변 반경의 그리드만 생성
                 let startX = (robot.x * scale) - 1000;
                 let endX = (robot.x * scale) + 1000;
                 let startY = (robot.y * scale) - 1000;
@@ -290,10 +303,9 @@ def index():
                 }
                 mainMap.stroke();
 
-                // 가상 도화지(누적 맵) 부착
                 mainMap.drawImage(mapCanvas, -MAP_CENTER, -MAP_CENTER); 
 
-                // 로봇 아이콘 렌더링 (글로벌 좌표 상에 출력)
+                // 로봇 아이콘 렌더링
                 let rx = robot.x * scale;
                 let ry = robot.y * scale;
 
@@ -319,12 +331,11 @@ def index():
                 requestDraw();
             }
 
-            // 1인칭 탑뷰에서는 수동 드래그 이동을 비활성화하고 마우스 휠 줌 기능만 유지
             const mMap = document.getElementById('mainMap');
             mMap.addEventListener('wheel', e => { 
                 scale *= (e.deltaY > 0 ? 0.9 : 1.1); 
                 e.preventDefault(); 
-                mapCtx.clearRect(0, 0, 8000, 8000); // 줌 변경 시 점 크기 동기화를 위해 도화지 초기화
+                mapCtx.clearRect(0, 0, 8000, 8000);
                 requestDraw(); 
             });
             
