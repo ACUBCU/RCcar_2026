@@ -8,5 +8,5 @@ car.camTilt(-17) # 카메라 상하 아래 최대로
 cam = Pilot.Camera(width=300, height=300)
 cam.show()
 
-dataCollecter = Pilot.Data_Collecter(Pilot.Collision_Avoid, camera=cam)
+dataCollecter = Pilot.Data_Collector(Pilot.Collision_Avoid, camera=cam)
 dataCollecter.show()
