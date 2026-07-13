@@ -8,3 +8,4 @@ CA.train(times=10) # 10 epoch
 
 # 모델 평가
 print(CA.run())
+#CA.show()
