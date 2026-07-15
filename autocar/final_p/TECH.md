@@ -105,4 +105,4 @@
 ## 10. 참조
 
 * **GitHub Repository**: https://github.com/ACUBCU/RCcar_2026/tree/main/autocar/final_p
-* **발표 자료**:
+* **발표 자료**: https://docs.google.com/presentation/d/1G4w3QCZUeyEwTtRI00P8uMzEIvpD-dT3rZPm9IXK33c/edit?usp=sharing
