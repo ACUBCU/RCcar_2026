@@ -1,1 +1,1 @@
-./autocar/final_p/DEVELOP_LOG
+[다음 개발 일정 참고](./autocar/final_p/DEVELOP_LOG)
