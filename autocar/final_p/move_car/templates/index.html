@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Autocar Right-Arc Mapping</title>
+    <style>
+        body { margin: 0; background-color: #121212; color: #ffffff; font-family: monospace; overflow: hidden; user-select: none; }
+        canvas { display: block; width: 100vw; height: 100vh; cursor: grab; }
+        canvas:active { cursor: grabbing; }
+
+        #status-panel {
+            position: absolute; top: 20px; left: 20px; background: rgba(20, 20, 20, 0.9); padding: 15px 20px;
+            border-radius: 8px; border: 1px solid #444; pointer-events: none; z-index: 10;
+        }
+        #status-panel h3 { margin: 0 0 10px 0; color: #00ffcc; }
+        .data-row { margin-bottom: 5px; font-size: 14px; }
+        .highlight { color: #ffeb3b; font-weight: bold; }
+        #error-log { margin-top: 5px; color: #ff4444; font-size: 12px; font-weight: bold; }
+
+        #control-panel {
+            position: absolute; bottom: 30px; left: 20px; background: rgba(20, 20, 20, 0.9); padding: 15px;
+            border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 12px; z-index: 10;
+        }
+        .buttons { display: flex; gap: 10px; margin-bottom: 5px; }
+        button { padding: 8px 12px; font-size: 14px; font-weight: bold; cursor: pointer; border: none; border-radius: 5px; color: white; transition: 0.2s; }
+        .btn-start { background-color: #28a745; }
+        .btn-stop { background-color: #dc3545; }
+        .btn-clear { background-color: #6c757d; }
+        .btn-center { background-color: #007bff; }
+        button:hover { filter: brightness(1.2); }
+        
+        .slider-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; gap: 10px; }
+        .slider-row input { width: 100px; cursor: pointer; }
+        .slider-row span.val { display: inline-block; width: 35px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div id="status-panel">
+        <h3>Autocar Right-Arc Map</h3>
+        <div class="data-row">State : <span id="val-state" class="highlight">WAITING</span></div>
+        <div class="data-row">Pose X: <span id="val-x">0.00</span> m</div>
+        <div class="data-row">Pose Y: <span id="val-y">0.00</span> m</div>
+        <div class="data-row">Walls : <span id="val-points">0</span> blocks</div>
+        <div id="error-log"></div>
+    </div>
+
+    <div id="control-panel">
+        <div class="buttons">
+            <button class="btn-start" onclick="sendCommand('start')">▶ 주행</button>
+            <button class="btn-stop" onclick="sendCommand('stop')">■ 정지</button>
+            <button class="btn-clear" onclick="clearMap()">🗑 초기화</button>
+            <button class="btn-center" onclick="centerCamera()">🎯 차 위치</button>
+        </div>
+        
+        <div class="slider-row">
+            <label>센서 범위:</label>
+            <input type="range" id="sl-range" min="0.5" max="5.0" step="0.1" value="2.0">
+            <span class="val highlight" id="lbl-range">2.0 m</span>
+        </div>
+        <div class="slider-row">
+            <label>데이터 격자:</label>
+            <input type="range" id="sl-grid" min="1" max="10" step="1" value="3">
+            <span class="val highlight" id="lbl-grid">3 cm</span>
+        </div>
+        <div class="slider-row">
+            <label>노이즈 필터:</label>
+            <input type="range" id="sl-hits" min="1" max="15" step="1" value="4">
+            <span class="val highlight" id="lbl-hits">4 회</span>
+        </div>
+        <div class="slider-row">
+            <label>지도 회전:</label>
+            <input type="range" id="sl-rot" min="-180" max="180" step="1" value="0">
+            <span class="val highlight" id="lbl-rot">0 °</span>
+        </div>
+    </div>
+
+    <canvas id="mapCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const errorLog = document.getElementById('error-log');
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        let mapGrid = new Map(); 
+        let pathPoints = []; 
+        let currentPose = { x: 0, y: 0, theta: Math.PI / 2 };
+
+        // 설정 변수
+        let MAX_RANGE = 2.0;  // 반경 2m
+        let GRID_SIZE = 0.03; 
+        let MIN_HITS = 4;     
+        let mapRotation = 0; 
+        
+        let cameraX = 0, cameraY = 0, scale = 80, autoCenter = true; 
+        let isDragging = false, lastMouseX = 0, lastMouseY = 0;
+
+        document.getElementById('sl-range').addEventListener('input', (e) => {
+            MAX_RANGE = parseFloat(e.target.value); document.getElementById('lbl-range').innerText = parseFloat(e.target.value).toFixed(1) + " m";
+        });
+        document.getElementById('sl-grid').addEventListener('input', (e) => {
+            GRID_SIZE = e.target.value / 100.0; document.getElementById('lbl-grid').innerText = e.target.value + " cm"; clearMap();
+        });
+        document.getElementById('sl-hits').addEventListener('input', (e) => {
+            MIN_HITS = parseInt(e.target.value); document.getElementById('lbl-hits').innerText = e.target.value + " 회";
+        });
+        document.getElementById('sl-rot').addEventListener('input', (e) => {
+            mapRotation = e.target.value * (Math.PI / 180); document.getElementById('lbl-rot').innerText = e.target.value + " °";
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true; autoCenter = false; lastMouseX = e.clientX; lastMouseY = e.clientY;
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY;
+                cameraX += (dx * Math.cos(-mapRotation) - dy * Math.sin(-mapRotation));
+                cameraY += (dx * Math.sin(-mapRotation) + dy * Math.cos(-mapRotation));
+                lastMouseX = e.clientX; lastMouseY = e.clientY;
+            }
+        });
+        canvas.addEventListener('wheel', (e) => {
+            scale *= (e.deltaY < 0 ? 1.1 : 0.9); scale = Math.max(5, Math.min(scale, 1000)); 
+        });
+
+        function centerCamera() { autoCenter = true; cameraX = 0; cameraY = 0; }
+        function sendCommand(action) { fetch(`/command/${action}`).catch(err => errorLog.innerText = err); }
+        function clearMap() { mapGrid.clear(); pathPoints = []; }
+
+        function processLidarData(pose, lidar) {
+            currentPose = pose;
+
+            if (pathPoints.length === 0) pathPoints.push({ x: pose.x, y: pose.y });
+            else {
+                const lastP = pathPoints[pathPoints.length - 1];
+                if (Math.hypot(pose.x - lastP.x, pose.y - lastP.y) >= 0.05) pathPoints.push({ x: pose.x, y: pose.y });
+            }
+
+            lidar.forEach(point => {
+                const px_m = point.x / 1000.0; 
+                const py_m = point.y / 1000.0;
+                
+                // 🚨 1. 반경 필터 (설정된 MAX_RANGE 이내만 허용)
+                const distance = Math.hypot(px_m, py_m);
+                if (distance > MAX_RANGE) return; 
+
+                // 🚨 2. 각도 필터 (오른쪽 중심 90도 호)
+                // px_m이 정면, py_m이 좌/우 (음수가 오른쪽)
+                const angleDeg = Math.atan2(py_m, px_m) * (180 / Math.PI);
+                
+                // 오른쪽 직각(-90도)을 기준으로 좌우 45도씩 (-135도 ~ -45도) 범위만 통과시킴
+                if (angleDeg < -135 || angleDeg > -45) return; 
+
+                const rotX = px_m * Math.cos(pose.theta) - py_m * Math.sin(pose.theta);
+                const rotY = px_m * Math.sin(pose.theta) + py_m * Math.cos(pose.theta);
+                const globalX = pose.x + rotX; const globalY = pose.y + rotY;
+
+                const gridX = Math.round(globalX / GRID_SIZE); 
+                const gridY = Math.round(globalY / GRID_SIZE);
+                const key = `${gridX},${gridY}`;
+                mapGrid.set(key, (mapGrid.get(key) || 0) + 1);
+            });
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const centerX = canvas.width / 2; const centerY = canvas.height / 2;
+
+            if (autoCenter) { cameraX = -(currentPose.x * scale); cameraY = -(-currentPose.y * scale); }
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; ctx.lineWidth = 1;
+            const offsetX = (centerX + cameraX) % scale; const offsetY = (centerY + cameraY) % scale;
+            for (let x = offsetX; x < canvas.width; x += scale) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+            for (let y = offsetY; y < canvas.height; y += scale) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(mapRotation);
+            ctx.translate(cameraX, cameraY);
+
+            ctx.fillStyle = '#00ffcc';
+            let solidCount = 0;
+            const dotSize = 1.5; 
+
+            mapGrid.forEach((hits, key) => {
+                if (hits >= MIN_HITS) { 
+                    solidCount++;
+                    const coords = key.split(',');
+                    const x = parseInt(coords[0]) * GRID_SIZE * scale;
+                    const y = -parseInt(coords[1]) * GRID_SIZE * scale; 
+                    
+                    const absX = centerX + cameraX + x;
+                    const absY = centerY + cameraY + y;
+                    if (absX > -50 && absX < canvas.width + 50 && absY > -50 && absY < canvas.height + 50) {
+                        ctx.fillRect(x - dotSize/2, y - dotSize/2, dotSize, dotSize); 
+                    }
+                }
+            });
+            document.getElementById('val-points').innerText = solidCount;
+
+            if (pathPoints.length > 1) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'; ctx.lineWidth = 1.5; ctx.beginPath();
+                for (let i = 0; i < pathPoints.length; i++) {
+                    const x = pathPoints[i].x * scale; const y = -pathPoints[i].y * scale;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            const carX = currentPose.x * scale; const carY = -currentPose.y * scale;
+            ctx.translate(carX, carY);
+            ctx.rotate(-currentPose.theta); 
+            
+            // 🚨 센서 탐색 호(Arc) 시각화 그리기
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.08)'; 
+            ctx.strokeStyle = 'rgba(0, 255, 204, 0.3)'; 
+            ctx.lineWidth = 1;
+            ctx.beginPath(); 
+            ctx.moveTo(0, 0); // 로봇 중심에서 시작
+            // Canvas Y축 반전 특성으로 인해 화면상 오른쪽은 양수 각도(45도~135도)로 그림
+            ctx.arc(0, 0, MAX_RANGE * scale, 45 * Math.PI / 180, 135 * Math.PI / 180); 
+            ctx.lineTo(0, 0);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ff3366'; ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#ffff00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(15, 0); ctx.stroke();
+            ctx.restore();
+
+            requestAnimationFrame(drawMap);
+        }
+
+        async function fetchLidarData() {
+            try {
+                const response = await fetch('/data');
+                if (!response.ok) throw new Error(`${response.status}`);
+                const data = await response.json();
+                errorLog.innerText = ""; 
+                if (data.status !== "empty" && data.pose && data.lidar) {
+                    document.getElementById('val-state').innerText = data.state;
+                    document.getElementById('val-x').innerText = data.pose.x.toFixed(2);
+                    document.getElementById('val-y').innerText = data.pose.y.toFixed(2);
+                    processLidarData(data.pose, data.lidar);
+                }
+            } catch (error) {
+                document.getElementById('val-state').innerText = "DISCONNECTED";
+                document.getElementById('val-state').style.color = "red";
+            }
+        }
+
+        requestAnimationFrame(drawMap); setInterval(fetchLidarData, 100); 
+    </script>
+</body>
+</html>

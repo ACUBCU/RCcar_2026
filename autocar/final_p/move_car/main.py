@@ -1,59 +1,67 @@
+import threading
 import time
-import multiprocessing
-import sys
+from flask import Flask, render_template, jsonify
+from multiprocessing import Queue, Event
 
-from follow_wall import LidarExplorer 
+from follow_wall import LidarExplorer, StairDetector
 
-def main():
-    multiprocessing.set_start_method('spawn', force=True)
+app = Flask(__name__)
+data_queue = Queue()
 
-    print("=========================================")
-    print(" AutoCar Prime NX - 자율 맵핑 시스템 시작")
-    print("=========================================")
+explorer = None
+stair_detector = None
 
-    data_queue = multiprocessing.Queue(maxsize=10)
-    
-    # 💡 안전 종료를 위한 Event 객체 생성
-    stop_event = multiprocessing.Event()
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    # 인자에 stop_event 추가
-    explorer_process = LidarExplorer(data_queue=data_queue, stop_event=stop_event)
+@app.route('/data')
+def get_data():
+    latest_data = None
+    while not data_queue.empty():
+        try:
+            latest_data = data_queue.get()
+        except:
+            break
+    if latest_data:
+        return jsonify(latest_data)
+    return jsonify({"status": "empty"})
 
-    try:
-        explorer_process.start()
-
-        print("[System] 주행 모니터링 중... (종료하려면 Ctrl+C를 누르세요)")
-        while True:
-            if not data_queue.empty():
-                status_data = data_queue.get()
-                cmd = status_data['steering_vector']['command']
-                print(f"현재 주행 명령: {cmd}")
-                
-            time.sleep(0.5)
-
-    except KeyboardInterrupt:
-        # Ctrl+C가 눌렸을 때 실행됨
-        print("\n[System] 사용자에 의한 긴급 정지 감지! 시스템 종료를 시작합니다.")
+@app.route('/command/<action>')
+def send_command(action):
+    global explorer
+    if not explorer:
+        return jsonify({"error": "시스템이 준비되지 않았습니다."}), 500
         
-    finally:
-        # 1. 자식 프로세스에게 "이제 멈추고 루프를 빠져나와!" 라고 알림
-        stop_event.set()
-        
-        # 2. 자식 프로세스가 finally 블록(car.stop())을 다 실행할 때까지 기다림 (최대 3초)
-        if explorer_process.is_alive():
-            print("[System] 하드웨어가 완전히 멈출 때까지 대기 중...")
-            explorer_process.join(timeout=3.0)
-            
-            # 3초가 지났는데도 프로세스가 안 죽으면 최후의 수단으로 킬
-            if explorer_process.is_alive():
-                print("[System] 응답이 없어 프로세스를 강제 종료합니다.")
-                explorer_process.terminate()
-                explorer_process.join()
-        
-        print("=========================================")
-        print(" 자율 맵핑 시스템이 안전하게 종료되었습니다.")
-        print("=========================================")
-        sys.exit(0)
+    if action == 'start':
+        explorer.driving_enabled.set() 
+        return jsonify({"status": "success", "message": "주행을 시작합니다."})
+    elif action == 'stop':
+        explorer.driving_enabled.clear()
+        return jsonify({"status": "success", "message": "주행을 정지했습니다."})
+    else:
+        return jsonify({"error": "알 수 없는 명령입니다."}), 400
 
 if __name__ == '__main__':
-    main()
+    stop_event = Event()
+    driving_enabled_event = Event() 
+    stair_event = Event() # 계단 감지 신호 동기화 이벤트
+    
+    explorer = LidarExplorer(data_queue, stop_event, driving_enabled_event, stair_event)
+    explorer.start()
+    
+    # 🚨 학습된 pth 파일명에 맞게 model_path 값을 변경하십시오.
+    stair_detector = StairDetector(stair_event, stop_event, model_path="collision_avoid_model.pth")
+    stair_detector.start()
+    
+    print("[SYSTEM] 오토카 주행 시스템 및 웹 서버가 구동되었습니다.")
+    print("[SYSTEM] 노트북 브라우저에서 http://192.168.0.49:5000 으로 접속하세요.")
+    
+    try:
+        app.run(host='0.0.0.0', port=5000, threaded=True, use_reloader=False)
+    except KeyboardInterrupt:
+        print("\n[SYSTEM] 시스템을 종료합니다.")
+    finally:
+        stop_event.set()
+        explorer.join()
+        stair_detector.join()
