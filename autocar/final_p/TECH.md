@@ -2,21 +2,15 @@
 
 ## 1. 프로젝트 개요
 
-| 항목 | 내용 |
-| --- | --- |
-| **프로젝트명** | AutoCar Prime nx를 사용한 공간 투영
-
- |
-| **수행 기간** | 2026.07.13~17
-
- |
+**프로젝트명** : AutoCar Prime nx를 사용한 공간 투영<br>
+**수행 기간** : 2026.07.13~17
 
 ### 팀원 및 담당 역할
 
-* **이동헌**: 
+* **이동헌**: PM, 라이더를 사용한 자율 주행, 코드 통합, 문서 작업
 
 
-* **신동수**: 
+* **신동수**: 데이터셋 수집, 전처리 및 모델 학습, 평가, 오도메트리
 
 
 
@@ -27,26 +21,12 @@
 | 구분 | 사용 기술 |
 | --- | --- |
 | **하드웨어** | AutoCar Prime nx, 카메라(320x240 해상도), Rplidar 센서, 내부 자이로 센서
-
- |
 | **펌웨어** | pop.Pilot 패키지 (Collision_Avoid), pop.LiDAR 패키지 (rplidar)
-
- |
 | **통신** | HTTP REST, AJAX Fetch API (웹-서버 간 데이터 폴링 통신)
-
- |
 | **Backend** | Python, Flask 프레임워크, Multiprocessing (Process, Event, Queue)
-
- |
 | **Database** | 메모리 기반 큐(Queue) 통신으로 실시간 데이터 대체 활용
-
- |
 | **Frontend** | HTML5 Canvas, JavaScript, CSS
-
- |
 | **AI/Model** | PyTorch 모델 로더 기반 충돌 회피 가중치 파일 (collision_avoid_model.pth)
-
- |
 
 ---
 
@@ -141,14 +121,8 @@
 | Method | Path | 역할 |
 | --- | --- | --- |
 | GET | `/` | 매핑 현황 및 원격 제어 기능이 포함된 대시보드 메인 화면(index.html) 렌더링
-
- |
 | GET | `/data` | 큐(Queue)에 적재되어 있는 최신 로봇 추정 좌표, 주행 상태 텍스트, 라이다 포인트 좌표를 JSON으로 반환
-
- |
 | GET | `/command/<action>` | 웹 클라이언트의 명령문(start, stop)을 라우팅하여 주행 시스템 활성화 플래그 제어
-
- |
 
 ---
 
